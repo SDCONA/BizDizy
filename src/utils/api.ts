@@ -1513,6 +1513,18 @@ export async function sendMessage(
   return data;
 }
 
+// Delete a conversation
+export async function deleteConversation(conversationId: string): Promise<void> {
+  const { error } = await supabase
+    .from('conversations')
+    .delete()
+    .eq('id', conversationId);
+  
+  if (error) {
+    throw new Error(error.message);
+  }
+}
+
 // Get total unread message count for a user
 export async function getUserUnreadCount(userId: string): Promise<number> {
   const { data: conversations } = await supabase
