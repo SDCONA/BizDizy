@@ -1,0 +1,51 @@
+name: bizdizy
+region: nyc
+
+# Static site configuration for React app
+static_sites:
+  - name: web
+    git:
+      branch: main
+      repo_clone_url: YOUR_GITHUB_REPO_URL
+    
+    # Build configuration
+    build_command: npm run build
+    output_dir: dist
+    
+    # Environment variables
+    envs:
+      - key: VITE_SUPABASE_URL
+        value: ${SUPABASE_URL}
+        scope: BUILD_TIME
+      - key: VITE_SUPABASE_ANON_KEY
+        value: ${SUPABASE_ANON_KEY}
+        scope: BUILD_TIME
+    
+    # Custom routes for SPA
+    routes:
+      - path: /
+      - path: /assets
+    
+    # Error document
+    error_document: index.html
+    
+    # Redirect all routes to index.html for client-side routing
+    catchall_document: index.html
+
+# Supabase Edge Functions (if deploying separately)
+functions:
+  - name: make-server
+    git:
+      branch: main
+      repo_clone_url: YOUR_GITHUB_REPO_URL
+    source_dir: supabase/functions/server
+    envs:
+      - key: SUPABASE_URL
+        value: ${SUPABASE_URL}
+        scope: RUN_TIME
+      - key: SUPABASE_ANON_KEY
+        value: ${SUPABASE_ANON_KEY}
+        scope: RUN_TIME
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        value: ${SUPABASE_SERVICE_ROLE_KEY}
+        scope: RUN_TIME
