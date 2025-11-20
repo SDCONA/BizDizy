@@ -50,9 +50,10 @@ interface BusinessProfileProps {
   onEdit?: (business: Business) => void;
   onLoginRequired?: () => void;
   onContactBusiness?: (business: Business) => void;
+  isAdminView?: boolean;
 }
 
-export function BusinessProfile({ business, currentUser, onBack, onEdit, onLoginRequired, onContactBusiness }: BusinessProfileProps) {
+export function BusinessProfile({ business, currentUser, onBack, onEdit, onLoginRequired, onContactBusiness, isAdminView = false }: BusinessProfileProps) {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoadingReviews, setIsLoadingReviews] = useState(true);
   const [showReviewModal, setShowReviewModal] = useState(false);
@@ -173,7 +174,7 @@ export function BusinessProfile({ business, currentUser, onBack, onEdit, onLogin
       });
 
       setCurrentBusiness(updatedBusiness);
-      toast.success('Hero image updated!');
+      toast.success('Picture Updated');
     } catch (error) {
       toast.error('Failed to update hero image');
     } finally {
@@ -194,7 +195,8 @@ export function BusinessProfile({ business, currentUser, onBack, onEdit, onLogin
     : 0;
 
   // Owner View - Matches Customer Design with Owner Functionality
-  if (isOwner) {
+  // Also use this view for admin viewing businesses
+  if (isOwner || isAdminView) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-12 px-4">
         <div className="max-w-6xl mx-auto">
@@ -221,9 +223,9 @@ export function BusinessProfile({ business, currentUser, onBack, onEdit, onLogin
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Main Content - Left Side */}
-            <div className="lg:col-span-2 space-y-6">
+          <div className="grid grid-cols-1 gap-6">
+            {/* Main Content - Full Width */}
+            <div className="space-y-6">
               {/* Business Header Card */}
               <Card className="relative overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 border-2 border-white/50 bg-white/80 backdrop-blur-sm">
                 {/* Hero Image */}
@@ -310,8 +312,7 @@ export function BusinessProfile({ business, currentUser, onBack, onEdit, onLogin
                       <div className="w-1 h-6 bg-gradient-to-b from-purple-600 to-pink-600 rounded-full"></div>
                       Gallery
                     </h3>
-                    <p className="text-sm text-gray-500 flex items-center gap-2 bg-blue-50 px-3 py-1.5 rounded-full border border-blue-200">
-                      <ImageIcon className="w-4 h-4" />
+                    <p className="text-sm text-gray-500 bg-blue-50 px-3 py-1.5 rounded-full border border-blue-200">
                       Tap any image to set as main
                     </p>
                   </div>
@@ -319,15 +320,15 @@ export function BusinessProfile({ business, currentUser, onBack, onEdit, onLogin
                     {currentBusiness.portfolio.slice(0, 4).map((image, index) => (
                       <div
                         key={index}
-                        onClick={() => handleSetHeroImage(index)}
-                        className={`relative aspect-square rounded-lg overflow-hidden cursor-pointer group shadow-md hover:shadow-xl transition-all ${
+                        className={`relative aspect-square rounded-lg overflow-hidden group shadow-md hover:shadow-xl transition-all ${
                           index === 0 ? 'ring-2 ring-blue-500 ring-offset-2' : ''
                         }`}
                       >
                         <img
                           src={image}
                           alt={`Portfolio ${index + 1}`}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                          onClick={() => setLightboxIndex(index)}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 cursor-pointer"
                         />
                         {index === 0 && (
                           <div className="absolute top-2 right-2 bg-white/95 backdrop-blur-md text-blue-600 px-2.5 py-1 rounded-full text-xs shadow-lg flex items-center gap-1 border border-white/50">
@@ -337,16 +338,25 @@ export function BusinessProfile({ business, currentUser, onBack, onEdit, onLogin
                         )}
                         {/* Show +N indicator on 4th image if there are more */}
                         {index === 3 && currentBusiness.portfolio.length > 4 && (
-                          <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                          <div 
+                            onClick={() => setLightboxIndex(index)}
+                            className="absolute inset-0 bg-black/60 flex items-center justify-center cursor-pointer hover:bg-black/70 transition-colors"
+                          >
                             <span className="text-white text-3xl">
                               +{currentBusiness.portfolio.length - 4}
                             </span>
                           </div>
                         )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent transition-all duration-300 flex items-end justify-center pb-3">
-                          <span className="text-white text-xs bg-white/20 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/30">
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent transition-all duration-300 flex items-end justify-center pb-3 pointer-events-none">
+                          <Button
+                            onClick={() => handleSetHeroImage(index)}
+                            disabled={index === 0}
+                            size="sm"
+                            variant={index === 0 ? "secondary" : "default"}
+                            className="text-xs bg-white/20 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/30 hover:bg-white/30 transition-all pointer-events-auto disabled:opacity-100"
+                          >
                             {index === 0 ? '✓ Current Main' : 'Set as Main'}
-                          </span>
+                          </Button>
                         </div>
                       </div>
                     ))}
@@ -471,17 +481,14 @@ export function BusinessProfile({ business, currentUser, onBack, onEdit, onLogin
                   </div>
                 )}
               </Card>
-            </div>
 
-            {/* Sidebar - Right Side */}
-            <div className="space-y-6">
-              {/* Contact Card */}
-              <Card className="p-6 shadow-xl border-2 border-white/50 bg-white/80 backdrop-blur-sm hover:shadow-2xl transition-shadow sticky top-6">
+              {/* Contact Information Card - Now below reviews */}
+              <Card className="p-6 shadow-xl border-2 border-white/50 bg-white/80 backdrop-blur-sm hover:shadow-2xl transition-shadow">
                 <h3 className="text-lg mb-4 text-gray-800 flex items-center gap-2">
                   <div className="w-1 h-6 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
                   Contact Information
                 </h3>
-                <div className="space-y-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {currentBusiness.phone && (
                     <>
                       {revealedContacts.phone ? (
@@ -546,7 +553,7 @@ export function BusinessProfile({ business, currentUser, onBack, onEdit, onLogin
                   )}
                   {currentBusiness.website && (
                     <a 
-                      href={currentBusiness.website} 
+                      href={currentBusiness.website.startsWith('http') ? currentBusiness.website : `https://${currentBusiness.website}`}
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="flex items-center gap-3 p-3 bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg border border-blue-200 hover:shadow-md transition-all"
@@ -625,6 +632,7 @@ export function BusinessProfile({ business, currentUser, onBack, onEdit, onLogin
             images={currentBusiness.portfolio}
             initialIndex={lightboxIndex}
             onClose={() => setLightboxIndex(null)}
+            onSetAsMain={isOwner ? handleSetHeroImage : undefined}
           />
         )}
 
@@ -643,7 +651,7 @@ export function BusinessProfile({ business, currentUser, onBack, onEdit, onLogin
 
   // Customer View - Multi-Card Layout (Original Design)
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-12 px-4">
+    <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-6 px-4">
       <div className="max-w-6xl mx-auto">
         {/* Back Button */}
         <div className="flex items-center justify-between mb-6">
@@ -1017,7 +1025,7 @@ export function BusinessProfile({ business, currentUser, onBack, onEdit, onLogin
                 )}
                 {currentBusiness.website && (
                   <a 
-                    href={currentBusiness.website} 
+                    href={currentBusiness.website.startsWith('http') ? currentBusiness.website : `https://${currentBusiness.website}`}
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="flex items-center gap-3 p-3 bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg border border-blue-200 hover:shadow-md transition-all"
@@ -1109,6 +1117,7 @@ export function BusinessProfile({ business, currentUser, onBack, onEdit, onLogin
           images={currentBusiness.portfolio}
           initialIndex={lightboxIndex}
           onClose={() => setLightboxIndex(null)}
+          onSetAsMain={isOwner ? handleSetHeroImage : undefined}
         />
       )}
 

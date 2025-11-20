@@ -310,9 +310,10 @@ export function Messages({ currentUser, onBack, initialBusinessId }: MessagesPro
   const currentConversationData = selectedConversation;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-12 px-4">
-      <div className="max-w-7xl mx-auto">
-        <div className="h-[calc(100vh-12rem)] flex bg-gradient-to-br from-gray-50 via-blue-50/30 to-gray-50 rounded-2xl overflow-hidden shadow-2xl">
+    <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-4 md:py-12 px-2 md:px-4">
+      {/* Original size: max-w-7xl (1280px) - Current: 30% smaller (~896px) */}
+      <div className="max-w-[56rem] mx-auto">
+        <div className="h-[calc(100vh-20rem)] md:h-[calc(100vh-12rem)] flex bg-gradient-to-br from-gray-50 via-blue-50/30 to-gray-50 rounded-2xl overflow-hidden shadow-2xl">
       {/* Sidebar - Conversations List */}
       <div className={`w-full md:w-80 border-r border-white/30 flex flex-col bg-gradient-to-br from-white/95 via-blue-50/90 to-white/95 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] ${selectedConversation ? 'hidden md:flex' : ''}`}>
         {/* Glass overlay effect */}

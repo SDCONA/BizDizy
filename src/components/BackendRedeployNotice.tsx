@@ -44,34 +44,34 @@ export function BackendRedeployNotice() {
   }, []);
 
   return (
-    <Alert className="border-amber-500/50 bg-slate-900 max-w-4xl mx-auto">
+    <Alert className="border-amber-500/50 bg-slate-900 max-w-4xl mx-auto overflow-x-hidden">
       <AlertCircle className="h-5 w-5 text-amber-400" />
       <AlertTitle className="text-amber-100 ml-2">Backend Connection Issue</AlertTitle>
       <AlertDescription className="text-slate-200 ml-7 mt-2">
         <div className="space-y-3">
-          <p>
+          <p className="break-words">
             The Edge Function is not responding. This could mean it's being redeployed or there's a configuration issue.
           </p>
           
           {/* Diagnostic Info */}
-          <div className="bg-slate-800 rounded-lg p-3 text-sm space-y-2">
+          <div className="bg-slate-800 rounded-lg p-3 text-sm space-y-2 overflow-x-auto">
             <div className="flex items-center gap-2">
               {checking ? (
-                <Loader2 className="h-4 w-4 animate-spin text-blue-400" />
+                <Loader2 className="h-4 w-4 animate-spin text-blue-400 flex-shrink-0" />
               ) : healthStatus?.status === 'ok' ? (
-                <CheckCircle className="h-4 w-4 text-green-400" />
+                <CheckCircle className="h-4 w-4 text-green-400 flex-shrink-0" />
               ) : (
-                <XCircle className="h-4 w-4 text-red-400" />
+                <XCircle className="h-4 w-4 text-red-400 flex-shrink-0" />
               )}
-              <span className="text-slate-100">
+              <span className="text-slate-100 break-words">
                 {checking ? 'Checking backend...' : healthStatus?.status === 'ok' ? 'Backend is online!' : 'Backend is offline'}
               </span>
             </div>
             
             {healthStatus?.status === 'ok' && (
-              <div className="ml-6 space-y-1 text-xs text-slate-300">
+              <div className="ml-6 space-y-1 text-xs text-slate-300 break-words">
                 <div>✅ Edge Function: Running</div>
-                <div>✅ Timestamp: {healthStatus.timestamp}</div>
+                <div className="break-all">✅ Timestamp: {healthStatus.timestamp}</div>
                 {healthStatus.env && (
                   <>
                     <div className={healthStatus.env.hasSupabaseUrl ? '✅' : '❌'}>
@@ -86,19 +86,19 @@ export function BackendRedeployNotice() {
             )}
             
             {healthStatus?.error && (
-              <div className="ml-6 text-xs text-red-400">
+              <div className="ml-6 text-xs text-red-400 break-words">
                 Error: {healthStatus.error}
               </div>
             )}
           </div>
           
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
             <Button
               onClick={checkHealth}
               disabled={checking}
               variant="outline"
               size="sm"
-              className="border-blue-500 bg-blue-500/20 hover:bg-blue-500/30 text-blue-100"
+              className="border-blue-500 bg-blue-500/20 hover:bg-blue-500/30 text-blue-100 w-full sm:w-auto"
             >
               {checking ? (
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -112,14 +112,14 @@ export function BackendRedeployNotice() {
               onClick={handleRefresh}
               variant="outline"
               size="sm"
-              className="border-amber-500 bg-amber-500/20 hover:bg-amber-500/30 text-amber-100"
+              className="border-amber-500 bg-amber-500/20 hover:bg-amber-500/30 text-amber-100 w-full sm:w-auto"
             >
               <RefreshCw className="h-4 w-4 mr-2" />
               Reload App
             </Button>
             
             {healthStatus?.status === 'ok' && (
-              <span className="text-sm text-green-400">
+              <span className="text-sm text-green-400 text-center sm:text-left">
                 ✅ Backend is online! Reload the app to continue.
               </span>
             )}
@@ -127,7 +127,7 @@ export function BackendRedeployNotice() {
           
           <details className="text-sm text-slate-300">
             <summary className="cursor-pointer hover:text-slate-100">What should I do?</summary>
-            <div className="mt-2 space-y-2 ml-4">
+            <div className="mt-2 space-y-2 ml-4 break-words">
               <p><strong>If "Backend is online":</strong> Click "Reload App" to continue.</p>
               <p><strong>If "Backend is offline":</strong></p>
               <ul className="list-disc list-inside space-y-1 ml-4">

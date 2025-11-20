@@ -4501,27 +4501,49 @@ app.post('/make-server-726d4144/cron/send-message-notifications', async (c) => {
     
     console.log(`📧 Found ${unnotifiedMessages.length} unread messages to process`);
     
-    // Group messages by recipient
-    // Key format: "user:{userId}" or "business:{ownerId}"
+    // Group messages by recipient AND conversation to check for already-notified messages
+    // Key format: "user:{userId}:conv:{convId}:sender:{type}" or "business:{ownerId}:conv:{convId}:sender:{type}"
     const messagesByRecipient = new Map<string, any[]>();
+    const messagesToSkip = new Set<string>(); // Messages to mark as notified but skip email
     
     for (const msg of unnotifiedMessages) {
       const conv = msg.conversations;
       let recipientKey: string;
+      let conversationKey: string;
       
       // Determine recipient based on sender type
       if (msg.sender_type === 'user') {
         // Customer sent message -> notify business owner
         recipientKey = `business:${conv.businesses.owner_id}`;
+        conversationKey = `${recipientKey}:conv:${msg.conversation_id}:sender:user`;
       } else {
         // Business sent message -> notify customer
         recipientKey = `user:${conv.user_id}`;
+        conversationKey = `${recipientKey}:conv:${msg.conversation_id}:sender:business`;
       }
       
-      if (!messagesByRecipient.has(recipientKey)) {
-        messagesByRecipient.set(recipientKey, []);
+      // Check if there are already notified unread messages from the same sender in this conversation
+      const { data: alreadyNotifiedMessages } = await supabase
+        .from('messages')
+        .select('id')
+        .eq('conversation_id', msg.conversation_id)
+        .eq('sender_type', msg.sender_type)
+        .is('read_at', null)
+        .not('email_notified_at', 'is', null)
+        .limit(1);
+      
+      if (alreadyNotifiedMessages && alreadyNotifiedMessages.length > 0) {
+        // There are already unread messages from this sender that were emailed
+        // Skip sending email for this message, but mark it as notified
+        console.log(`⏭️ Skipping email for message ${msg.id} - already notified unread messages from same sender in conversation`);
+        messagesToSkip.add(msg.id);
+        continue;
       }
-      messagesByRecipient.get(recipientKey)!.push(msg);
+      
+      if (!messagesByRecipient.has(conversationKey)) {
+        messagesByRecipient.set(conversationKey, []);
+      }
+      messagesByRecipient.get(conversationKey)!.push(msg);
     }
     
     console.log(`👥 Grouped into ${messagesByRecipient.size} recipients`);
@@ -4691,18 +4713,20 @@ app.post('/make-server-726d4144/cron/send-message-notifications', async (c) => {
       }
     }
     
-    // Batch update all notified messages
-    if (messageIdsToUpdate.length > 0) {
+    // Batch update all notified messages (both emailed and skipped)
+    const allMessagesToUpdate = [...messageIdsToUpdate, ...Array.from(messagesToSkip)];
+    
+    if (allMessagesToUpdate.length > 0) {
       const notifiedTimestamp = new Date().toISOString();
       const { error: updateError } = await supabase
         .from('messages')
         .update({ email_notified_at: notifiedTimestamp })
-        .in('id', messageIdsToUpdate);
+        .in('id', allMessagesToUpdate);
       
       if (updateError) {
         console.error('Error updating email_notified_at:', updateError);
       } else {
-        console.log(`✅ Updated ${messageIdsToUpdate.length} messages with email_notified_at timestamp`);
+        console.log(`✅ Updated ${allMessagesToUpdate.length} messages with email_notified_at timestamp (${emailsSent} emailed, ${messagesToSkip.size} skipped)`);
       }
     }
     

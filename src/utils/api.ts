@@ -322,14 +322,17 @@ export async function getHighlyRatedBusinesses(limit: number = 6): Promise<Busin
     .eq('is_active', true)
     .is('deleted_at', null)
     .gte('rating', 4.0)
-    .order('rating', { ascending: false })
-    .limit(limit);
+    .limit(30); // Fetch more to randomize from
   
   if (error) {
     return [];
   }
   
-  return data || [];
+  // Randomize the results
+  const shuffled = (data || []).sort(() => Math.random() - 0.5);
+  
+  // Return only the requested limit
+  return shuffled.slice(0, limit);
 }
 
 export async function createBusiness(business: Partial<Business>): Promise<Business> {

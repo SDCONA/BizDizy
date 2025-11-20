@@ -3,12 +3,15 @@ import { Mail, Lock, User as UserIcon, Phone, ArrowLeft, Loader2, Check, X, Eye,
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
+import { Checkbox } from './ui/checkbox';
 import { RECAPTCHA_SITE_KEY, executeRecaptcha, resetRecaptcha } from '../utils/recaptcha';
 
 interface SignupPageProps {
   onSignup: (email: string, password: string, name: string, phone?: string, recaptchaToken?: string) => Promise<boolean>;
   onLoginClick: () => void;
   onBackToHome: () => void;
+  onTermsClick?: () => void;
+  onPrivacyClick?: () => void;
 }
 
 interface PasswordStrength {
@@ -18,7 +21,7 @@ interface PasswordStrength {
   suggestions: string[];
 }
 
-export function SignupPage({ onSignup, onLoginClick, onBackToHome }: SignupPageProps) {
+export function SignupPage({ onSignup, onLoginClick, onBackToHome, onTermsClick, onPrivacyClick }: SignupPageProps) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -29,6 +32,7 @@ export function SignupPage({ onSignup, onLoginClick, onBackToHome }: SignupPageP
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [touched, setTouched] = useState({
     name: false,
     email: false,
@@ -161,6 +165,12 @@ export function SignupPage({ onSignup, onLoginClick, onBackToHome }: SignupPageP
     // Validate password match
     if (password !== confirmPassword) {
       setError('Passwords do not match. Please check and try again.');
+      return;
+    }
+
+    // Validate terms agreement
+    if (!agreedToTerms) {
+      setError('Please agree to the terms and conditions.');
       return;
     }
 
@@ -446,6 +456,38 @@ export function SignupPage({ onSignup, onLoginClick, onBackToHome }: SignupPageP
               )}
             </div>
 
+            {/* Terms and Conditions Checkbox */}
+            <div className="p-3 sm:p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <div className="flex items-start gap-2 sm:gap-3">
+                <Checkbox
+                  id="terms"
+                  checked={agreedToTerms}
+                  onCheckedChange={(checked) => setAgreedToTerms(checked === true)}
+                  className="mt-0.5 flex-shrink-0"
+                />
+                <Label htmlFor="terms" className="text-xs sm:text-sm cursor-pointer">
+                  I agree to the terms and conditions *
+                </Label>
+              </div>
+              <div className="mt-2 ml-7 sm:ml-8 flex items-center gap-2 text-xs">
+                <button
+                  type="button"
+                  onClick={onTermsClick}
+                  className="text-blue-600 hover:text-blue-700 font-medium hover:underline"
+                >
+                  Terms of Service
+                </button>
+                <span className="text-gray-400">•</span>
+                <button
+                  type="button"
+                  onClick={onPrivacyClick}
+                  className="text-blue-600 hover:text-blue-700 font-medium hover:underline"
+                >
+                  Privacy Policy
+                </button>
+              </div>
+            </div>
+
             {/* reCAPTCHA v3 notice */}
             {RECAPTCHA_SITE_KEY && (
               <div className="text-xs text-gray-500 text-center">
@@ -482,11 +524,6 @@ export function SignupPage({ onSignup, onLoginClick, onBackToHome }: SignupPageP
               </button>
             </p>
           </div>
-        </div>
-
-        {/* Help Info */}
-        <div className="mt-6 text-center text-sm text-gray-600">
-          <p>By creating an account, you agree to our Terms of Service and Privacy Policy</p>
         </div>
       </div>
     </div>

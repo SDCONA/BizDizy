@@ -385,7 +385,6 @@ export default function App() {
       if (result.user) {
         setCurrentUser(result.user);
         loadUserBusinesses(result.user.id);
-        toast.success('🎉 Account created successfully! Welcome to BizDizy!');
         setCurrentView('home');
         return true;
       }
@@ -712,6 +711,14 @@ export default function App() {
             onSignup={handleSignup}
             onLoginClick={() => setCurrentView('login')}
             onBackToHome={handleBackToHome}
+            onTermsClick={() => {
+              setLegalPageType('terms');
+              setCurrentView('legal');
+            }}
+            onPrivacyClick={() => {
+              setLegalPageType('privacy');
+              setCurrentView('legal');
+            }}
           />
         )}
 

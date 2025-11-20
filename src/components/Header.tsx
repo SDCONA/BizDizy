@@ -140,13 +140,28 @@ export function Header({
         {/* Mobile Menu */}
         <div className="md:hidden">
           {currentUser ? (
-            <Button
-              onClick={onAccountClick}
-              variant="ghost"
-              size="sm"
-            >
-              <User className="w-5 h-5" />
-            </Button>
+            <div className="flex items-center gap-2">
+              {/* Admin Button - Mobile */}
+              {showAdminLink && onAdminClick && (
+                <Button
+                  onClick={onAdminClick}
+                  variant="ghost"
+                  size="sm"
+                  className="text-purple-700 hover:text-purple-900 hover:bg-purple-50"
+                >
+                  <Shield className="w-5 h-5" />
+                </Button>
+              )}
+              
+              {/* My Account Button - Mobile */}
+              <Button
+                onClick={onAccountClick}
+                variant="ghost"
+                size="sm"
+              >
+                <User className="w-5 h-5" />
+              </Button>
+            </div>
           ) : (
             <Button onClick={onLoginClick} size="sm">
               Login

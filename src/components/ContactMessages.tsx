@@ -5,6 +5,16 @@ import { Card } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Textarea } from "./ui/textarea";
 import { toast } from "sonner@2.0.3";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "./ui/alert-dialog";
 import { 
   getContactMessages, 
   markContactMessageAsRead, 

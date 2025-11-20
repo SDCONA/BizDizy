@@ -198,7 +198,7 @@ export function AdminDashboard({ currentUser, onBack }: AdminDashboardProps) {
         <h1 className="text-4xl mb-8">Admin Dashboard</h1>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card className="p-6">
             <div className="flex items-center justify-between mb-2">
               <Building2 className="w-8 h-8 text-blue-600" />
@@ -237,7 +237,7 @@ export function AdminDashboard({ currentUser, onBack }: AdminDashboardProps) {
 
         {/* Management Tabs */}
         <Tabs defaultValue="businesses" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-7 max-w-6xl">
+          <TabsList className="grid w-full grid-cols-4 md:grid-cols-7 max-w-6xl">
             <TabsTrigger value="businesses">Businesses</TabsTrigger>
             <TabsTrigger value="recycle">
               <Archive className="w-4 h-4 mr-1" />
@@ -476,6 +476,7 @@ export function AdminDashboard({ currentUser, onBack }: AdminDashboardProps) {
                 setViewingBusiness(null);
               }}
               onLoginRequired={() => {}}
+              isAdminView={true}
             />
           )}
         </DialogContent>

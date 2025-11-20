@@ -6,9 +6,10 @@ interface ImageLightboxProps {
   images: string[];
   initialIndex: number;
   onClose: () => void;
+  onSetAsMain?: (index: number) => void;
 }
 
-export function ImageLightbox({ images, initialIndex, onClose }: ImageLightboxProps) {
+export function ImageLightbox({ images, initialIndex, onClose, onSetAsMain }: ImageLightboxProps) {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
 
   const handlePrevious = () => {
@@ -47,6 +48,24 @@ export function ImageLightbox({ images, initialIndex, onClose }: ImageLightboxPr
         {currentIndex + 1} / {images.length}
       </div>
 
+      {/* Set as Main Button */}
+      {onSetAsMain && (
+        <div className="absolute bottom-38 md:bottom-4 left-1/2 -translate-x-1/2 z-20 pb-safe">
+          <Button
+            onClick={(e) => {
+              e.stopPropagation();
+              onSetAsMain(currentIndex);
+              onClose();
+            }}
+            disabled={currentIndex === 0}
+            size="sm"
+            className="bg-white text-black hover:bg-gray-200 disabled:opacity-50 shadow-xl font-medium"
+          >
+            {currentIndex === 0 ? '✓ Current Main' : 'Set as Main'}
+          </Button>
+        </div>
+      )}
+
       {/* Navigation */}
       {images.length > 1 && (
         <>
@@ -79,7 +98,7 @@ export function ImageLightbox({ images, initialIndex, onClose }: ImageLightboxPr
       <img
         src={images[currentIndex]}
         alt={`Image ${currentIndex + 1}`}
-        className="max-w-[90vw] max-h-[90vh] object-contain"
+        className="max-w-[90vw] max-h-[75vh] md:max-h-[90vh] object-contain"
         onClick={(e) => e.stopPropagation()}
       />
     </div>
