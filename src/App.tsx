@@ -104,44 +104,53 @@ export default function App() {
       await initializeApp();
       
       // Check for query parameters first (shared links)
-      checkQueryParameters();
+      await checkQueryParameters();
       
       // Check if we're on a password reset link
       checkForPasswordReset();
       
-      // Check for hash-based navigation
+      // Check for hash-based navigation (only if no query params handled)
       checkHashNavigation();
     })();
   }, []);
   
   // Check URL query parameters for shared links
-  function checkQueryParameters() {
+  async function checkQueryParameters() {
     const urlParams = new URLSearchParams(window.location.search);
     const view = urlParams.get('view');
     const businessId = urlParams.get('id');
     
+    console.log('Checking query parameters:', { view, businessId, url: window.location.href });
+    
     if (view === 'profile' && businessId) {
       // Load the business profile
-      (async () => {
-        try {
-          const business = await api.getBusinessById(businessId);
-          if (business) {
-            setSelectedBusiness(business);
-            setCurrentView('profile');
-          } else {
-            toast.error('Business not found');
-          }
-        } catch (error) {
-          console.error('Error loading shared business:', error);
-          toast.error('Failed to load business profile');
+      try {
+        console.log('Loading business from shared link:', businessId);
+        const business = await api.getBusinessById(businessId);
+        if (business) {
+          console.log('Business loaded successfully:', business.name);
+          setSelectedBusiness(business);
+          setCurrentView('profile');
+        } else {
+          console.log('Business not found:', businessId);
+          toast.error('Business not found');
         }
-      })();
+      } catch (error) {
+        console.error('Error loading shared business:', error);
+        toast.error('Failed to load business profile');
+      }
     }
   }
   
   // Check URL hash for navigation
   function checkHashNavigation() {
     const hash = window.location.hash.substring(1); // Remove the #
+    
+    // Don't process hash if we have query parameters (shared link takes priority)
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('view') || urlParams.has('id')) {
+      return; // Query params take priority
+    }
     
     // Remove any query parameters from hash
     const view = hash.split('?')[0];
