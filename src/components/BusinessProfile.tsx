@@ -492,7 +492,7 @@ export function BusinessProfile({ business, currentUser, onBack, onEdit, onLogin
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {currentBusiness.phone && (isOwner || currentBusiness.show_phone) && (
-                    <>
+                    <div>
                       {revealedContacts.phone ? (
                         <a 
                           href={`tel:${currentBusiness.phone}`}
@@ -526,10 +526,15 @@ export function BusinessProfile({ business, currentUser, onBack, onEdit, onLogin
                           </div>
                         </button>
                       )}
-                    </>
+                      {isOwner && !currentBusiness.show_phone && (
+                        <p className="text-xs text-yellow-600 mt-1 ml-1">
+                          ℹ️ Visible only for you
+                        </p>
+                      )}
+                    </div>
                   )}
                   {currentBusiness.email && (isOwner || currentBusiness.show_email) && (
-                    <>
+                    <div>
                       {revealedContacts.email ? (
                         <a 
                           href={`mailto:${currentBusiness.email}`}
@@ -563,7 +568,12 @@ export function BusinessProfile({ business, currentUser, onBack, onEdit, onLogin
                           </div>
                         </button>
                       )}
-                    </>
+                      {isOwner && !currentBusiness.show_email && (
+                        <p className="text-xs text-yellow-600 mt-1 ml-1">
+                          ℹ️ Visible only for you
+                        </p>
+                      )}
+                    </div>
                   )}
                   {currentBusiness.website && (
                     <a 
@@ -976,7 +986,7 @@ export function BusinessProfile({ business, currentUser, onBack, onEdit, onLogin
               </h3>
               <div className="space-y-3">
                 {currentBusiness.phone && (isOwner || currentBusiness.show_phone) && (
-                  <>
+                  <div>
                     {revealedContacts.phone ? (
                       <a 
                         href={`tel:${currentBusiness.phone}`}
@@ -1010,10 +1020,15 @@ export function BusinessProfile({ business, currentUser, onBack, onEdit, onLogin
                         </div>
                       </button>
                     )}
-                  </>
+                    {isOwner && !currentBusiness.show_phone && (
+                      <p className="text-xs text-yellow-600 mt-1 ml-1">
+                        ℹ️ Visible only for you
+                      </p>
+                    )}
+                  </div>
                 )}
                 {currentBusiness.email && (isOwner || currentBusiness.show_email) && (
-                  <>
+                  <div>
                     {revealedContacts.email ? (
                       <a 
                         href={`mailto:${currentBusiness.email}`}
@@ -1047,7 +1062,12 @@ export function BusinessProfile({ business, currentUser, onBack, onEdit, onLogin
                         </div>
                       </button>
                     )}
-                  </>
+                    {isOwner && !currentBusiness.show_email && (
+                      <p className="text-xs text-yellow-600 mt-1 ml-1">
+                        ℹ️ Visible only for you
+                      </p>
+                    )}
+                  </div>
                 )}
                 {currentBusiness.website && (
                   <a 

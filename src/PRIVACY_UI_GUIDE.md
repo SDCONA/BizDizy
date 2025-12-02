@@ -55,6 +55,7 @@ OR when hidden:
 │  │  📞  Phone                    [👁️‍🗨️ Hidden]      │ │ ← Yellow badge
 │  │      (123) 456-7890                              │ │
 │  └──────────────────────────────────────────────────┘ │
+│  ℹ️ Visible only for you                              │ ← Info text
 │                                                       │
 │  ┌──────────────────────────────────────────────────┐ │
 │  │  ✉️  Email                                        │ │ ← No badge (visible)

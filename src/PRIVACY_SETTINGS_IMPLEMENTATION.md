@@ -24,8 +24,9 @@ Added privacy toggles for business owners to control whether their phone number 
 - Respects privacy settings when displaying contact info
 - Logic: Shows contact if `(isOwner || show_phone)` or `(isOwner || show_email)`
 - **Owner View**: Always sees their contact info, even when hidden
+  - Yellow "Hidden" badge in the contact card
+  - "ℹ️ Visible only for you" text below the contact info
 - **Public View**: Only sees contact info if privacy toggle is ON
-- **Hidden Badge**: Yellow badge with "Hidden" label appears for owners when contact is hidden
 - Applied to both contact sections:
   - Main contact information card (mobile/tablet view)
   - Sticky sidebar contact card (desktop view)
