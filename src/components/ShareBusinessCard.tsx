@@ -45,34 +45,59 @@ export function ShareBusinessCard({ business, isOpen, onClose }: ShareBusinessCa
   // Copy link to clipboard
   const handleCopyLink = async () => {
     try {
-      // Fallback method using textarea (more reliable in iframes and restricted contexts)
+      // Try modern Clipboard API first
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(businessUrl);
+        setCopied(true);
+        toast.success('Link copied to clipboard!');
+        setTimeout(() => setCopied(false), 2000);
+        return;
+      }
+      
+      // Fallback method for older browsers or non-secure contexts
       const textArea = document.createElement('textarea');
       textArea.value = businessUrl;
+      
+      // Make the textarea out of viewport
       textArea.style.position = 'fixed';
       textArea.style.left = '-999999px';
       textArea.style.top = '-999999px';
-      document.body.appendChild(textArea);
-      textArea.focus();
-      textArea.select();
+      textArea.setAttribute('readonly', '');
       
-      try {
-        const successful = document.execCommand('copy');
-        document.body.removeChild(textArea);
-        
-        if (successful) {
-          setCopied(true);
-          toast.success('Link copied to clipboard!');
-          setTimeout(() => setCopied(false), 2000);
-        } else {
-          throw new Error('Copy command was unsuccessful');
+      document.body.appendChild(textArea);
+      
+      // For iOS
+      if (navigator.userAgent.match(/ipad|ipod|iphone/i)) {
+        const range = document.createRange();
+        range.selectNodeContents(textArea);
+        const selection = window.getSelection();
+        if (selection) {
+          selection.removeAllRanges();
+          selection.addRange(range);
         }
-      } catch (err) {
-        document.body.removeChild(textArea);
-        throw err;
+        textArea.setSelectionRange(0, 999999);
+      } else {
+        textArea.select();
+      }
+      
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textArea);
+      
+      if (successful) {
+        setCopied(true);
+        toast.success('Link copied to clipboard!');
+        setTimeout(() => setCopied(false), 2000);
+      } else {
+        throw new Error('Copy command was unsuccessful');
       }
     } catch (error) {
       console.error('Copy failed:', error);
-      toast.error('Failed to copy link. Please copy manually.');
+      
+      // Show the URL in a prompt as last resort
+      const userCopy = window.prompt('Copy this link:', businessUrl);
+      if (userCopy === null) {
+        toast.error('Copy cancelled');
+      }
     }
   };
 

@@ -103,6 +103,9 @@ export default function App() {
       await clearInvalidSessionsOnLoad();
       await initializeApp();
       
+      // Check for query parameters first (shared links)
+      checkQueryParameters();
+      
       // Check if we're on a password reset link
       checkForPasswordReset();
       
@@ -110,6 +113,31 @@ export default function App() {
       checkHashNavigation();
     })();
   }, []);
+  
+  // Check URL query parameters for shared links
+  function checkQueryParameters() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const view = urlParams.get('view');
+    const businessId = urlParams.get('id');
+    
+    if (view === 'profile' && businessId) {
+      // Load the business profile
+      (async () => {
+        try {
+          const business = await api.getBusinessById(businessId);
+          if (business) {
+            setSelectedBusiness(business);
+            setCurrentView('profile');
+          } else {
+            toast.error('Business not found');
+          }
+        } catch (error) {
+          console.error('Error loading shared business:', error);
+          toast.error('Failed to load business profile');
+        }
+      })();
+    }
+  }
   
   // Check URL hash for navigation
   function checkHashNavigation() {
