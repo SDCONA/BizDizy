@@ -39,6 +39,7 @@ import { ReviewReportModal } from './ReviewReportModal';
 import { ReviewModal } from './ReviewModal';
 import { ImageLightbox } from './ImageLightbox';
 import { OptimizedImage } from './OptimizedImage';
+import { ShareBusinessCard } from './ShareBusinessCard';
 
 const REVIEWS_PER_PAGE = 5;
 const MAX_COMMENT_LENGTH = 300;
@@ -60,6 +61,7 @@ export function BusinessProfile({ business, currentUser, onBack, onEdit, onLogin
   const [showReportModal, setShowReportModal] = useState(false);
   const [showReviewReportModal, setShowReviewReportModal] = useState(false);
   const [reviewToReport, setReviewToReport] = useState<Review | null>(null);
+  const [showShareModal, setShowShareModal] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [currentBusiness, setCurrentBusiness] = useState<Business>(business);
   const [isUpdatingHero, setIsUpdatingHero] = useState(false);
@@ -1094,17 +1096,26 @@ export function BusinessProfile({ business, currentUser, onBack, onEdit, onLogin
                 </>
               )}
 
+              <Separator className="my-4" />
+              
+              {/* Share Button */}
+              <Button
+                onClick={() => setShowShareModal(true)}
+                variant="outline"
+                className="w-full border-2 border-blue-500 text-blue-600 hover:bg-blue-50 hover:border-blue-600"
+              >
+                <Share2 className="w-4 h-4 mr-2" />
+                Share Business Card
+              </Button>
+
               {onContactBusiness && (
-                <>
-                  <Separator className="my-4" />
-                  <Button
-                    onClick={() => onContactBusiness(currentBusiness)}
-                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                  >
-                    <MessageCircle className="w-4 h-4 mr-2" />
-                    Contact Business
-                  </Button>
-                </>
+                <Button
+                  onClick={() => onContactBusiness(currentBusiness)}
+                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 mt-2"
+                >
+                  <MessageCircle className="w-4 h-4 mr-2" />
+                  Contact Business
+                </Button>
               )}
             </Card>
           </div>
@@ -1148,6 +1159,13 @@ export function BusinessProfile({ business, currentUser, onBack, onEdit, onLogin
         reviewAuthor={reviewToReport?.user_name || 'Anonymous'}
         businessName={currentBusiness.name}
         currentUser={currentUser}
+      />
+
+      {/* Share Business Card Modal */}
+      <ShareBusinessCard
+        business={currentBusiness}
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
       />
     </div>
   );
