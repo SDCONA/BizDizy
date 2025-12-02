@@ -64,6 +64,10 @@ CREATE TABLE businesses (
   email TEXT,
   website TEXT,
   
+  -- Privacy Settings
+  show_phone BOOLEAN DEFAULT true,
+  show_email BOOLEAN DEFAULT true,
+  
   -- Location
   address TEXT,
   city TEXT,

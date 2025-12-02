@@ -20,6 +20,10 @@ export interface Business {
   email: string | null;
   website: string | null;
   
+  // Privacy Settings
+  show_phone: boolean;
+  show_email: boolean;
+  
   // Location
   address: string | null;
   city: string | null;

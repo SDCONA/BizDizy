@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Loader2, Upload, X, Image as ImageIcon, Check, ChevronsUpDown } from 'lucide-react';
+import { ArrowLeft, Loader2, Upload, X, Image as ImageIcon, Check, ChevronsUpDown, Eye, EyeOff } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -7,6 +7,7 @@ import { Textarea } from './ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from './ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
+import { Switch } from './ui/switch';
 import { Business, CATEGORIES } from '../types/business';
 import { AuthUser } from '../types/user';
 import { toast } from 'sonner@2.0.3';
@@ -41,6 +42,10 @@ export function BusinessRegistration({
   const [city, setCity] = useState(businessToEdit?.city || '');
   const [zipCode, setZipCode] = useState(businessToEdit?.zip_code || '');
   const [serviceArea, setServiceArea] = useState(businessToEdit?.service_area || '');
+  
+  // Privacy settings
+  const [showPhone, setShowPhone] = useState(businessToEdit?.show_phone ?? true);
+  const [showEmail, setShowEmail] = useState(businessToEdit?.show_email ?? true);
   
   // Social media
   const [facebook, setFacebook] = useState(businessToEdit?.facebook_url || '');
@@ -140,6 +145,8 @@ export function BusinessRegistration({
             city: city || null,
             zip_code: zipCode || null,
             service_area: serviceArea || null,
+            show_phone: showPhone,
+            show_email: showEmail,
             facebook_url: facebook || null,
             instagram_url: instagram || null,
             twitter_url: twitter || null,
@@ -175,6 +182,8 @@ export function BusinessRegistration({
         city: city || null,
         zip_code: zipCode || null,
         service_area: serviceArea || null,
+        show_phone: showPhone,
+        show_email: showEmail,
         facebook_url: facebook || null,
         instagram_url: instagram || null,
         twitter_url: twitter || null,
@@ -338,6 +347,22 @@ export function BusinessRegistration({
                     required
                     placeholder="(123) 456-7890"
                   />
+                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="flex items-center gap-2">
+                      {showPhone ? (
+                        <Eye className="w-4 h-4 text-green-600" />
+                      ) : (
+                        <EyeOff className="w-4 h-4 text-gray-400" />
+                      )}
+                      <span className="text-sm text-gray-700">
+                        {showPhone ? 'Visible on business page' : 'Hidden on business page'}
+                      </span>
+                    </div>
+                    <Switch
+                      checked={showPhone}
+                      onCheckedChange={setShowPhone}
+                    />
+                  </div>
                 </div>
 
                 <div className="space-y-2">
@@ -349,6 +374,22 @@ export function BusinessRegistration({
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="contact@business.com"
                   />
+                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="flex items-center gap-2">
+                      {showEmail ? (
+                        <Eye className="w-4 h-4 text-green-600" />
+                      ) : (
+                        <EyeOff className="w-4 h-4 text-gray-400" />
+                      )}
+                      <span className="text-sm text-gray-700">
+                        {showEmail ? 'Visible on business page' : 'Hidden on business page'}
+                      </span>
+                    </div>
+                    <Switch
+                      checked={showEmail}
+                      onCheckedChange={setShowEmail}
+                    />
+                  </div>
                 </div>
               </div>
 

@@ -491,7 +491,7 @@ export function BusinessProfile({ business, currentUser, onBack, onEdit, onLogin
                   Contact Information
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {currentBusiness.phone && (
+                  {currentBusiness.phone && (isOwner || currentBusiness.show_phone) && (
                     <>
                       {revealedContacts.phone ? (
                         <a 
@@ -501,10 +501,16 @@ export function BusinessProfile({ business, currentUser, onBack, onEdit, onLogin
                           <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-md">
                             <Phone className="w-5 h-5 text-white" />
                           </div>
-                          <div className="overflow-hidden">
+                          <div className="overflow-hidden flex-1">
                             <p className="text-xs text-gray-600">Phone</p>
                             <p className="text-gray-700 text-sm truncate">{currentBusiness.phone}</p>
                           </div>
+                          {isOwner && !currentBusiness.show_phone && (
+                            <div className="flex items-center gap-1 px-2 py-1 bg-yellow-100 rounded text-xs text-yellow-700">
+                              <EyeOff className="w-3 h-3" />
+                              <span>Hidden</span>
+                            </div>
+                          )}
                         </a>
                       ) : (
                         <button
@@ -522,7 +528,7 @@ export function BusinessProfile({ business, currentUser, onBack, onEdit, onLogin
                       )}
                     </>
                   )}
-                  {currentBusiness.email && (
+                  {currentBusiness.email && (isOwner || currentBusiness.show_email) && (
                     <>
                       {revealedContacts.email ? (
                         <a 
@@ -532,10 +538,16 @@ export function BusinessProfile({ business, currentUser, onBack, onEdit, onLogin
                           <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-md">
                             <Mail className="w-5 h-5 text-white" />
                           </div>
-                          <div className="overflow-hidden">
+                          <div className="overflow-hidden flex-1">
                             <p className="text-xs text-gray-600">Email</p>
                             <p className="text-gray-700 text-sm truncate">{currentBusiness.email}</p>
                           </div>
+                          {isOwner && !currentBusiness.show_email && (
+                            <div className="flex items-center gap-1 px-2 py-1 bg-yellow-100 rounded text-xs text-yellow-700">
+                              <EyeOff className="w-3 h-3" />
+                              <span>Hidden</span>
+                            </div>
+                          )}
                         </a>
                       ) : (
                         <button
@@ -963,7 +975,7 @@ export function BusinessProfile({ business, currentUser, onBack, onEdit, onLogin
                 Contact Information
               </h3>
               <div className="space-y-3">
-                {currentBusiness.phone && (
+                {currentBusiness.phone && (isOwner || currentBusiness.show_phone) && (
                   <>
                     {revealedContacts.phone ? (
                       <a 
@@ -973,10 +985,16 @@ export function BusinessProfile({ business, currentUser, onBack, onEdit, onLogin
                         <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-md">
                           <Phone className="w-5 h-5 text-white" />
                         </div>
-                        <div className="overflow-hidden">
+                        <div className="overflow-hidden flex-1">
                           <p className="text-xs text-gray-600">Phone</p>
                           <p className="text-gray-700 text-sm truncate">{currentBusiness.phone}</p>
                         </div>
+                        {isOwner && !currentBusiness.show_phone && (
+                          <div className="flex items-center gap-1 px-2 py-1 bg-yellow-100 rounded text-xs text-yellow-700">
+                            <EyeOff className="w-3 h-3" />
+                            <span>Hidden</span>
+                          </div>
+                        )}
                       </a>
                     ) : (
                       <button
@@ -994,7 +1012,7 @@ export function BusinessProfile({ business, currentUser, onBack, onEdit, onLogin
                     )}
                   </>
                 )}
-                {currentBusiness.email && (
+                {currentBusiness.email && (isOwner || currentBusiness.show_email) && (
                   <>
                     {revealedContacts.email ? (
                       <a 
@@ -1004,10 +1022,16 @@ export function BusinessProfile({ business, currentUser, onBack, onEdit, onLogin
                         <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-md">
                           <Mail className="w-5 h-5 text-white" />
                         </div>
-                        <div className="overflow-hidden">
+                        <div className="overflow-hidden flex-1">
                           <p className="text-xs text-gray-600">Email</p>
                           <p className="text-gray-700 text-sm truncate">{currentBusiness.email}</p>
                         </div>
+                        {isOwner && !currentBusiness.show_email && (
+                          <div className="flex items-center gap-1 px-2 py-1 bg-yellow-100 rounded text-xs text-yellow-700">
+                            <EyeOff className="w-3 h-3" />
+                            <span>Hidden</span>
+                          </div>
+                        )}
                       </a>
                     ) : (
                       <button
